@@ -1,6 +1,7 @@
 r"""Window-based change point detection"""
 
 
+import math
 import numpy as np
 from scipy.signal import argrelmax
 
@@ -15,7 +16,7 @@ class Window(BaseEstimator):
     """Window sliding method."""
 
     def __init__(
-        self, width=100, model="l2", custom_cost=None, min_size=2, jump=5, params=None
+        self, width=100, model="l2", custom_cost=None, min_size=2, jump=5, max_samples=None, params=None
     ):
         """Instanciate with window length.
 
@@ -29,6 +30,7 @@ class Window(BaseEstimator):
         """
         self.min_size = min_size
         self.jump = jump
+        self.max_samples = max_samples
         self.width = 2 * (width // 2)
         self.n_samples = None
         self.signal = None
@@ -99,6 +101,23 @@ class Window(BaseEstimator):
                 bkps.append(bkp)
                 bkps.sort()
                 error = self.cost.sum_of_costs(bkps)
+
+        # remove shifts if they last too long
+        start_index = 0
+        end_index = 1
+        to_delete = []
+
+        if self.max_samples is not None and len(bkps) > 1:
+            for i in range(math.floor(len(bkps) / 2)):
+                print(len(bkps), start_index, end_index)
+                if (bkps[end_index] - bkps[start_index]) > self.max_samples:
+                    to_delete.append(start_index)
+                    to_delete.append(end_index)
+                    print("Added to delete - shifts last too long")
+
+                start_index += 2
+                end_index += 2
+            bkps = list(np.delete(bkps, to_delete))
 
         return bkps
 
