@@ -113,7 +113,6 @@ class Window(BaseEstimator):
                 if (bkps[end_index] - bkps[start_index]) > self.max_samples:
                     to_delete.append(start_index)
                     to_delete.append(end_index)
-                    print("Added to delete - shifts last too long")
 
                 start_index += 2
                 end_index += 2
