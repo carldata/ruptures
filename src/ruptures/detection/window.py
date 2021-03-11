@@ -118,6 +118,11 @@ class Window(BaseEstimator):
                 end_index += 2
             bkps = list(np.delete(bkps, to_delete))
 
+        # remove changepoint if it starts but never ends
+        if self.remove_single is True:
+            if (len(bkps) % 2) != 0:
+                del bkps[-1]
+
         return bkps
 
     def fit(self, signal) -> "Window":
