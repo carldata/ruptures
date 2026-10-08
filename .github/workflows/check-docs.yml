@@ -4,13 +4,13 @@ on:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v5
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.8'
+        python-version: '3.12'
     - name: Install sndfile library # for librose, see https://github.com/deepcharles/ruptures/pull/121
       run: |
         sudo apt-get install libsndfile1-dev
@@ -24,7 +24,7 @@ jobs:
     - name: Build documentation
       run: |
         mkdocs build
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
       with:
         name: DocumentationHTML
         path: site/
